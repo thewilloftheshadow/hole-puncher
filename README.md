@@ -1,6 +1,6 @@
 # Hole Puncher
 
-A Carbon-based Discord bot that forwards a single user's messages from a single channel into a live PTY shell session.
+Hole Puncher is a Carbon-based Discord bot that turns one Discord channel into a live PTY shell. It forwards messages from a single user to a local shell and streams the output back into the same channel.
 
 ## ⚠️ Danger Zone
 
@@ -12,45 +12,31 @@ This project blindly injects Discord message content into a live shell session. 
 - A host that can build native dependencies (`node-pty`)
 - Discord app with the **Message Content** gateway intent enabled
 
-## Configuration
+## Quick Start
 
-Copy `config.json.example` to `config.json` and fill in your IDs:
-
-```json
-{
-	"channelId": "123456789012345678",
-	"userId": "123456789012345678",
-	"botToken": "your-bot-token"
-}
-```
-
-You can also set environment variables instead of `config.json`:
-
-- `HOLE_PUNCHER_CHANNEL_ID`
-- `HOLE_PUNCHER_USER_ID`
-- `DISCORD_BOT_TOKEN` (if not set in `config.json`)
-
-The PTY session is in-memory and resets if the bot restarts.
-
-## Discord Environment
-
-Set the standard Carbon/Discord environment variables (for example in a `.env` file):
-
-- `BASE_URL` (required by Carbon but unused since HTTP routes are disabled)
-- `DISCORD_CLIENT_ID`
-- `DISCORD_PUBLIC_KEY` (required by Carbon but unused since HTTP routes are disabled)
-- `DISCORD_BOT_TOKEN` (if not set in `config.json`)
-
-## Streaming Output
-
-Terminal output is streamed live back into the channel. Output is chunked into Discord messages between 1500 and 1800 characters, preserving all content.
-
-## Running
-
-```bash
-bun install
-bun run dev
-```
+1. **Create a Discord app**
+    - In the [Discord Developer Portal](https://discord.com/developers/applications), create an app + bot.
+    - Enable **Message Content** intent.
+    - Copy the **Bot Token**.
+2. **Invite the bot** to your server with permissions to read and send messages.
+3. **Configure Hole Puncher**
+    - Copy `config.json.example` to `config.json` and fill it in:
+        ```json
+        {
+        	"channelId": "123456789012345678",
+        	"userId": "123456789012345678",
+        	"botToken": "your-bot-token"
+        }
+        ```
+    - Or set environment variables instead of `config.json`:
+        - `HOLE_PUNCHER_CHANNEL_ID`
+        - `HOLE_PUNCHER_USER_ID`
+        - `DISCORD_BOT_TOKEN`
+4. **Install + run**
+    ```bash
+    bun install
+    bun run dev
+    ```
 
 For production:
 
@@ -58,4 +44,24 @@ For production:
 bun run start
 ```
 
-Messages sent by the configured user in the configured channel are injected directly into the PTY shell and streamed back to Discord.
+## Usage
+
+- Send a message in the configured channel as the configured user.
+- The bot writes it to the PTY shell and streams output back to Discord.
+- The PTY session is in-memory and **resets if the bot restarts**.
+
+## Streaming Output
+
+Output is streamed live back into the channel and chunked into messages between **1500–1800 characters**. Heavy output can hit Discord rate limits and lag behind real time. Failed sends are logged but not retried.
+
+## Scripts
+
+- `bun run lint` → `oxlint .`
+- `bun run format` → `oxfmt .`
+- `bun run typecheck` → `tsc --noEmit`
+
+## Troubleshooting
+
+- **No output?** Ensure Message Content intent is enabled and the bot can read the channel.
+- **Wrong user/channel?** Double-check `channelId` + `userId` in config.
+- **Native build failures?** `node-pty` requires a working compiler toolchain on your host.
