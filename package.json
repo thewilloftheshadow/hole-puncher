@@ -1,0 +1,25 @@
+{
+	"name": "hole-puncher",
+	"version": "1.0.0",
+	"description": "A Carbon bot that forwards a single user's messages to a live PTY shell.",
+	"type": "module",
+	"main": "./src/index.ts",
+	"scripts": {
+		"preinstall": "bunx only-allow bun",
+		"dev": "bun run . --watch",
+		"start": "bun run .",
+		"lint": "oxlint .",
+		"format": "oxfmt .",
+		"typecheck": "tsc --noEmit"
+	},
+	"dependencies": {
+		"@buape/carbon": "latest",
+		"node-pty": "latest"
+	},
+	"devDependencies": {
+		"@types/bun": "latest",
+		"oxfmt": "latest",
+		"oxlint": "latest",
+		"typescript": "latest"
+	}
+}
